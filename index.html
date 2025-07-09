@@ -1,0 +1,506 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jailbreak Changelogs Viewer</title>
+    <style>
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #242424;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --text-accent: #ffffff;
+            --border-color: #4a90e2;
+            --accent-color: #ff8c42;
+            --hover-bg: #3a3a3a;
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #e8e8e8;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --text-accent: #000000;
+            --border-color: #4a90e2;
+            --accent-color: #ff8c42;
+            --hover-bg: #f0f0f0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+            color: var(--text-accent);
+            position: relative;
+        }
+        .header a {
+            color: var(--accent-color) !important;
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--border-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .theme-toggle:hover {
+            background: #357abd;
+        }
+        .search-box {
+            max-width: 600px;
+            margin: 0 auto 25px;
+            padding: 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        .calculator-section {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            margin: 0 auto 25px;
+        }
+        .calculator-title {
+            font-size: 20px;
+            color: var(--border-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .selected-cars {
+            margin-bottom: 15px;
+        }
+        .selected-car {
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .car-info {
+            flex: 1;
+            min-width: 200px;
+            color: var(--text-primary);
+        }
+        .car-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .quantity-input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+        .duped-checkbox {
+            margin-left: 10px;
+        }
+        .remove-btn {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .remove-btn:hover {
+            background: #e67e22;
+        }
+        .total-value {
+            background: #2ecc71;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .item-card {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            position: relative;
+        }
+        .item-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(74, 144, 226, 0.3);
+            border-color: var(--accent-color);
+        }
+        .item-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: var(--border-color);
+            margin-bottom: 8px;
+        }
+        .item-info {
+            margin: 4px 0;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        .item-info strong {
+            color: var(--accent-color);
+        }
+        .add-btn {
+            background: var(--border-color);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+            font-size: 14px;
+        }
+        .add-btn:hover {
+            background: #357abd;
+        }
+        .stats {
+            text-align: center;
+            margin: 15px 0;
+            color: var(--text-secondary);
+        }
+        .stats strong {
+            color: var(--border-color);
+        }
+        .error {
+            text-align: center;
+            color: #e74c3c;
+            font-size: 18px;
+            margin: 20px 0;
+        }
+        
+        /* Fix input number arrows appearance */
+        input[type="number"] {
+            -webkit-appearance: textfield;
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+        
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type="number"]::-moz-outer-spin-button,
+        input[type="number"]::-moz-inner-spin-button {
+            -moz-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button id="themeToggle" onclick="toggleTheme()" class="theme-toggle">
+            <span id="themeIcon">🌙</span>
+        </button>
+        <h1>Jailbreak Calculator (Changelogs)</h1>
+        <p><a href="https://jailbreakchangelogs.xyz/" target="_blank" style="color: var(--border-color); text-decoration: none;">Calculate your inventory value faster using the Changelogs value list</a></p>
+    </div>
+
+    {% if error %}
+        <div class="error">{{ error }}</div>
+    {% else %}
+        <div style="max-width: 600px; margin: 0 auto 20px;">
+            <form method="GET" style="display: flex; gap: 10px; align-items: stretch;">
+                <input type="text" name="search" class="search-box" value="{{ search_query or '' }}" placeholder="Search cars by name..." style="flex: 1; margin: 0;">
+                <button type="submit" style="padding: 10px 20px; background-color: #ff8c42; color: white; border: none; border-radius: 5px; cursor: pointer; height: auto;">Search</button>
+            </form>
+        </div>
+
+        <!-- Calculator Section -->
+        <div class="calculator-section">
+            <h2 class="calculator-title">🚗 Your Inventory Calculator</h2>
+            
+            <div class="selected-cars" id="selectedCars">
+                <p style="text-align: center; color: #b0b0b0; font-style: italic;">Add cars from the list below to calculate your inventory value</p>
+            </div>
+            
+            <div class="total-value" id="totalValue">
+                Total Value: $0
+            </div>
+        </div>
+        
+        <div class="stats">
+            <strong>Total Cars Available: {{ items|length }}</strong>
+            {% if search_query %}
+                <span style="color: #3498db;"> (Search: "{{ search_query }}")</span>
+            {% endif %}
+            <br><small>Sorted by most expensive first</small>
+        </div>
+
+        <div class="items-grid">
+            {% for item in items %}
+                <div class="item-card">
+                    <div class="item-name">{{ item.name }}</div>
+                    {% if item.type %}
+                        <div class="item-info"><strong>Type:</strong> {{ item.type }}</div>
+                    {% endif %}
+                    {% if item.rarity %}
+                        <div class="item-info"><strong>Rarity:</strong> {{ item.rarity }}</div>
+                    {% endif %}
+                    <div class="item-info">
+                        <strong>Cash Value:</strong> 
+                        {% if item.parsed_cash_value and item.parsed_cash_value != 0 %}
+                            {% if item.parsed_cash_value >= 1000000 %}
+                                {% set millions = (item.parsed_cash_value / 1000000) %}
+                                {% if millions == (millions | int) %}
+                                    ${{ millions | int }}m
+                                {% else %}
+                                    ${{ "%.1f" | format(millions) }}m
+                                {% endif %}
+                            {% elif item.parsed_cash_value >= 1000 %}
+                                {% set thousands = (item.parsed_cash_value / 1000) %}
+                                {% if thousands == (thousands | int) %}
+                                    ${{ thousands | int }}k
+                                {% else %}
+                                    ${{ "%.1f" | format(thousands) }}k
+                                {% endif %}
+                            {% else %}
+                                ${{ item.parsed_cash_value }}
+                            {% endif %}
+                        {% else %}
+                            $0
+                        {% endif %}
+                    </div>
+                    <div class="item-info">
+                        <strong>Duped Value:</strong> 
+                        {% if item.duped_value and item.duped_value != "N/A" and item.duped_value != "0" %}
+                            ${{ item.duped_value }}
+                        {% else %}
+                            No duped value
+                        {% endif %}
+                    </div>
+                    {% if item.season %}
+                        <div class="item-info"><strong>Season:</strong> {{ item.season }}</div>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap;">
+                        <label style="font-size: 13px; color: var(--accent-color);">Amount:</label>
+                        <input type="number" id="amount-{{ loop.index0 }}" value="0" min="0" max="999" 
+                               style="width: 50px; padding: 4px; border: 1px solid var(--border-color); border-radius: 3px; background-color: var(--bg-primary); color: var(--text-primary); font-size: 12px;">
+                        {% if item.duped_value and item.duped_value != "N/A" and item.duped_value != "0" %}
+                        <label style="font-size: 13px; color: var(--accent-color);">Duped:</label>
+                        <input type="number" id="duped-{{ loop.index0 }}" value="0" min="0" max="999" 
+                               style="width: 50px; padding: 4px; border: 1px solid var(--border-color); border-radius: 3px; background-color: var(--bg-primary); color: var(--text-primary); font-size: 12px;">
+                        {% endif %}
+                    </div>
+                    <button class="add-btn" onclick="addCarWithSettings('{{ item.name }}', {{ item.parsed_cash_value or 0 }}, '{{ item.duped_value or "0" }}', {{ loop.index0 }})">
+                        Add to Inventory
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <script>
+        let selectedCars = [];
+
+        function parseDupedValue(dupedStr) {
+            if (!dupedStr || dupedStr === "N/A" || dupedStr === "0") return 0;
+            
+            const str = dupedStr.toString().toLowerCase().replace(/[$,]/g, '');
+            const match = str.match(/^([\d.]+)([km]?)$/);
+            
+            if (!match) return 0;
+            
+            const number = parseFloat(match[1]);
+            const suffix = match[2];
+            
+            if (suffix === 'k') return number * 1000;
+            if (suffix === 'm') return number * 1000000;
+            return number;
+        }
+
+        function addCar(name, cashValue, dupedValue) {
+            // Check if car already exists
+            const existingIndex = selectedCars.findIndex(car => car.name === name);
+            if (existingIndex !== -1) {
+                selectedCars[existingIndex].regularQuantity += 1;
+            } else {
+                selectedCars.push({
+                    name: name,
+                    cashValue: cashValue,
+                    dupedValue: dupedValue,
+                    parsedDupedValue: parseDupedValue(dupedValue),
+                    regularQuantity: 1,
+                    dupedQuantity: 0
+                });
+            }
+            updateDisplay();
+        }
+
+        function addCarWithSettings(name, cashValue, dupedValue, cardIndex) {
+            const amountInput = document.getElementById(`amount-${cardIndex}`);
+            const dupedInput = document.getElementById(`duped-${cardIndex}`);
+            
+            const regularAmount = parseInt(amountInput.value) || 0;
+            const dupedAmount = dupedInput ? (parseInt(dupedInput.value) || 0) : 0;
+            
+            if (regularAmount === 0 && dupedAmount === 0) {
+                return; // Don't add if both amounts are 0
+            }
+            
+            // Check if car already exists
+            const existingIndex = selectedCars.findIndex(car => car.name === name);
+            if (existingIndex !== -1) {
+                selectedCars[existingIndex].regularQuantity += regularAmount;
+                selectedCars[existingIndex].dupedQuantity += dupedAmount;
+            } else {
+                selectedCars.push({
+                    name: name,
+                    cashValue: cashValue,
+                    dupedValue: dupedValue,
+                    parsedDupedValue: parseDupedValue(dupedValue),
+                    regularQuantity: regularAmount,
+                    dupedQuantity: dupedAmount
+                });
+            }
+            
+            // Reset the inputs
+            amountInput.value = 0;
+            if (dupedInput) {
+                dupedInput.value = 0;
+            }
+            
+            updateDisplay();
+        }
+
+        function removeCar(index) {
+            selectedCars.splice(index, 1);
+            updateDisplay();
+        }
+
+        function updateRegularQuantity(index, quantity) {
+            selectedCars[index].regularQuantity = parseInt(quantity) || 0;
+            if (selectedCars[index].regularQuantity === 0 && selectedCars[index].dupedQuantity === 0) {
+                removeCar(index);
+            } else {
+                updateDisplay();
+            }
+        }
+
+        function updateDupedQuantity(index, quantity) {
+            selectedCars[index].dupedQuantity = parseInt(quantity) || 0;
+            if (selectedCars[index].regularQuantity === 0 && selectedCars[index].dupedQuantity === 0) {
+                removeCar(index);
+            } else {
+                updateDisplay();
+            }
+        }
+
+        function updateDisplay() {
+            const container = document.getElementById('selectedCars');
+            const totalValueElement = document.getElementById('totalValue');
+            
+            if (selectedCars.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #b0b0b0; font-style: italic;">Add cars from the list below to calculate your inventory value</p>';
+                totalValueElement.textContent = 'Total Value: $0';
+                return;
+            }
+
+            let totalValue = 0;
+            let html = '';
+
+            selectedCars.forEach((car, index) => {
+                const regularValue = car.cashValue * car.regularQuantity;
+                const dupedValue = car.parsedDupedValue * car.dupedQuantity;
+                const carTotalValue = regularValue + dupedValue;
+                totalValue += carTotalValue;
+
+                html += `
+                    <div class="selected-car">
+                        <div class="car-info">
+                            <strong>${car.name}</strong><br>
+                            <small>Regular: ${car.regularQuantity} × $${car.cashValue.toLocaleString()} = $${regularValue.toLocaleString()}</small><br>
+                            <small>Duped: ${car.dupedQuantity} × $${car.parsedDupedValue.toLocaleString()} = $${dupedValue.toLocaleString()}</small><br>
+                            <small><strong>Total: $${carTotalValue.toLocaleString()}</strong></small>
+                        </div>
+                        <div class="car-controls">
+                            <label>Amount:</label>
+                            <input type="number" class="quantity-input" value="${car.regularQuantity}" min="0" 
+                                   onchange="updateRegularQuantity(${index}, this.value)">
+                            <label>Duped:</label>
+                            <input type="number" class="quantity-input" value="${car.dupedQuantity}" min="0" 
+                                   onchange="updateDupedQuantity(${index}, this.value)">
+                            <button class="remove-btn" onclick="removeCar(${index})">Remove</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+            totalValueElement.textContent = `Total Value: $${totalValue.toLocaleString()}`;
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // Load saved theme on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (savedTheme === 'light') {
+                document.body.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '☀️';
+            }
+        });
+    </script>
+</body>
+</html>
